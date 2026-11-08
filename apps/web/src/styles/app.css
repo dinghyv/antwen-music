@@ -301,8 +301,11 @@ select.field { padding: 0 8px; }
 /* ---- The daily card ---- */
 
 .daily {
-  height: 212px; border-radius: 24px; position: relative; overflow: hidden; color: #fff; display: flex; align-items: center;
-  padding: 0 32px; gap: 28px; text-align: left; width: 100%; margin-bottom: 8px;
+  min-height: 212px; border-radius: 24px; position: relative; overflow: hidden; color: #fff; display: flex; align-items: center;
+  padding: 20px 32px; gap: 28px; text-align: left; width: 100%; margin-bottom: 8px;
+  /* Its parts drop out by the card's own width (container queries below),
+     whatever the window, the sidebar and the font size leave it. */
+  container-type: inline-size;
   transition: box-shadow 0.3s, background 0.6s;
   box-shadow: 0 14px 34px -14px var(--card-shade);
 }
@@ -470,11 +473,29 @@ select.field { padding: 0 8px; }
 
 .phone-only { display: none !important; }
 
+/* The daily card's words need ~240px: the record stack goes first, then the picks. */
+@container (max-width: 920px) { .daily .stack { display: none; } }
+@container (max-width: 600px) { .daily .picks { display: none; } }
+
+/* ---- Tablets and narrow windows ---- */
+
+@media (max-width: 1180px) and (min-width: 761px) {
+  :root { --sidebar-w: 212px; --page-pad: 28px; }
+  .player-bar .center { width: 360px; min-width: 240px; }
+  .player-bar .now { min-width: 130px; }
+  .player-bar .right { min-width: 100px; }
+}
+
 @media (max-width: 960px) and (min-width: 761px) {
-  :root { --sidebar-w: 200px; --page-pad: 24px; }
-  .player-bar .center { min-width: 220px; }
+  :root { --sidebar-w: 196px; --page-pad: 22px; }
+  .player-bar .center { min-width: 200px; }
   .hero .art { width: 160px; height: 160px; }
-  .daily .stack { display: none; }
+}
+
+/* Touch tablets: rows and buttons a finger can hit. */
+@media (hover: none) and (min-width: 761px) {
+  .sidebar .nav-item { min-height: 40px; }
+  .player-bar .round-btn { min-width: 40px; min-height: 40px; }
 }
 
 /* ---- Phones: the sidebar is a drawer, the player a card over the foot ---- */

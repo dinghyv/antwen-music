@@ -122,11 +122,18 @@ export function registerAuth(app: FastifyInstance, db: DB) {
 
   app.get('/api/auth/callback', async (req, reply) => {
     const q = req.query as Record<string, string>
-    if (q.error) return page(reply, 400, `登录失败：${q.error_description || q.error}`)
-    const st = db.prepare(`SELECT * FROM oidc_states WHERE state = ?`).get(q.state ?? '') as
+    const st = db.prepare(`SELECT * FROM oidc_states WHERE state = ?`).get(String(q.state ?? '')) as
       | { verifier: string; return_to: string; created_at: number }
       | undefined
-    db.prepare(`DELETE FROM oidc_states WHERE state = ?`).run(q.state ?? '')
+    if (st) db.prepare(`DELETE FROM oidc_states WHERE state = ?`).run(String(q.state))
+    if (q.error) {
+      // Anyone can make this address with any text in it: never show what the
+      // query says, only a fixed line for the error's code.
+      req.log.info({ error: String(q.error).slice(0, 64), known: !!st }, 'oidc callback error')
+      // Declined on the main site: back to the sign-in page, no error.
+      if (q.error === 'access_denied') return reply.redirect('/')
+      return page(reply, 400, CALLBACK_ERRORS[String(q.error)] ?? '登录失败，请重新登录。')
+    }
     if (!st || Date.now() - st.created_at > 10 * 60_000) return page(reply, 400, '登录已过期，请重新登录。')
     const d = await discover()
     const tokenRes = await fetch(d.token_endpoint, {
@@ -187,10 +194,26 @@ export function registerAuth(app: FastifyInstance, db: DB) {
   })
 }
 
+/** What the callback page says for an OAuth error code: fixed text, never the query's. */
+const CALLBACK_ERRORS: Record<string, string> = {
+  login_required: '请先在主站登录。',
+  consent_required: '需要在主站同意授权。',
+  interaction_required: '需要在主站完成登录。',
+  invalid_request: '登录请求无效，请重新登录。',
+  invalid_scope: '登录请求的权限无效，请联系管理员。',
+  unauthorized_client: '这个应用未获主站授权，请联系管理员。',
+  unsupported_response_type: '登录配置有误，请联系管理员。',
+  server_error: '主站登录服务出错，请稍后再试。',
+  temporarily_unavailable: '主站登录服务暂时不可用，请稍后再试。',
+}
+
+const escapeHtml = (s: string) =>
+  s.replace(/[<>&"']/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' })[c]!)
+
 function page(reply: FastifyReply, code: number, text: string) {
-  const html = `<!doctype html><meta charset="utf-8"><title>antwen music</title>
+  const html = `<!doctype html><meta charset="utf-8"><title>安稳音乐</title>
 <body style="font:15px system-ui;display:grid;place-items:center;height:100vh;margin:0;color:#1d1d1f">
-<div style="text-align:center"><p>${text.replace(/[<&]/g, (c) => (c === '<' ? '&lt;' : '&amp;'))}</p>
-<p><a href="/api/auth/login" style="color:#e0334a">重新登录</a></p></div>`
+<div style="text-align:center"><p>${escapeHtml(text)}</p>
+<p><a href="/" style="color:#e0334a">返回登录页</a></p></div>`
   return reply.code(code).type('text/html; charset=utf-8').send(html)
 }
