@@ -24,7 +24,11 @@
 .np-side {
   --cover: clamp(200px, min(36vw, 440px, calc(100vh - 436px)), 440px);
   width: max(var(--cover), 280px); flex-shrink: 0; display: flex; flex-direction: column; justify-content: center;
+  padding-top: 24px;
 }
+/* .scrub grows to fill a row; in this column it would take all the spare
+   height, opening gaps around it and pushing the cover up into the tabs. */
+.np-side > .scrub { flex: none; }
 .np-cover {
   width: var(--cover); height: var(--cover); border-radius: 14px; overflow: hidden; position: relative; flex-shrink: 0;
   background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.3); box-shadow: 0 24px 50px -16px rgba(0, 0, 0, 0.55);

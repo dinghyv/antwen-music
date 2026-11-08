@@ -386,7 +386,11 @@ export class Plugins {
     if (u.protocol !== 'https:') throw new Error('Give a GitHub repository, or an https address of a zip')
     const res = await undiciFetch(u.href, { dispatcher: githubDispatcher() })
     if (!res.ok) throw new Error(`Downloading failed: HTTP ${res.status}`)
-    return { zip: new Uint8Array(await res.arrayBuffer()), repo: undefined, ref: undefined, version: undefined }
+    const zip = new Uint8Array(await res.arrayBuffer())
+    // Every zip begins "PK"; a web page given in its place says so plainly.
+    if (zip[0] !== 0x50 || zip[1] !== 0x4b)
+      throw new Error('该地址下载到的不是 zip（可能是网页）。请填 GitHub 仓库地址，或插件 Releases 里 .zip 文件的下载链接')
+    return { zip, repo: undefined, ref: undefined, version: undefined }
   }
 }
 
@@ -449,6 +453,10 @@ function extractPlugin(zip: Uint8Array, dir: string) {
 function githubRepo(source: string): string | undefined {
   const s = source.replace(/\.git$/, '').replace(/\/$/, '')
   let m = /^(?:https?:\/\/)?github\.com\/([\w.-]+)\/([\w.-]+)/.exec(s)
+  if (m) return `${m[1]}/${m[2]}`
+  // A mirror in front of it, such as https://gh-proxy.org/https://github.com/owner/repo:
+  // the repository is installed through the API, which needs no mirror.
+  m = /^https?:\/\/[^/]+\/(?:https?:\/\/)?github\.com\/([\w.-]+)\/([\w.-]+)/.exec(s)
   if (m) return `${m[1]}/${m[2]}`
   m = /^mygo-music:\/\/install-plugin\?repo=([\w.-]+)\/([\w.-]+)/.exec(s)
   if (m) return `${m[1]}/${m[2]}`

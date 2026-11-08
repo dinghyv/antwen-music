@@ -412,6 +412,11 @@ async function load(i: number, play: boolean, at = 0) {
     }, 10_000)
   } catch (e) {
     if (seq !== loadSeq) return
+    // play() was interrupted by pause() or a new src: expected, not an error.
+    if ((e as Error).name === 'AbortError') {
+      usePlayer.setState({ loading: false, playing: !audio.paused })
+      return
+    }
     const code = errorCode(e)
     usePlayer.setState({ loading: false, error: errorMessage(e) })
     if (code === 'signIn') void useApp.getState().startSignIn(tr.source)
