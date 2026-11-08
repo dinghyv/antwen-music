@@ -84,18 +84,36 @@ let playedTimer: ReturnType<typeof setTimeout> | undefined
 let remoteTimer: ReturnType<typeof setInterval> | undefined
 
 /** Eases the element's volume to v over ms, then calls done. */
+// The fade still pending: finished at once if the tab is hidden mid-fade.
+let fadeEnd: (() => void) | null = null
+
 function fadeTo(v: number, ms: number, done?: () => void) {
   cancelAnimationFrame(fadeTimer!)
+  const target = Math.max(0, Math.min(1, v))
+  const finish = () => {
+    cancelAnimationFrame(fadeTimer!)
+    fadeEnd = null
+    audio.volume = target
+    done?.()
+  }
+  // A hidden tab runs no animation frames: a fade by them would never end,
+  // and a song started in the background would stay at volume 0.
+  if (document.hidden) return finish()
   const from = audio.volume
   const start = performance.now()
   const step = () => {
     const t = Math.min(1, (performance.now() - start) / ms)
-    audio.volume = Math.max(0, Math.min(1, from + (v - from) * t))
-    if (t < 1) fadeTimer = requestAnimationFrame(step)
-    else done?.()
+    if (t >= 1) return finish()
+    audio.volume = Math.max(0, Math.min(1, from + (target - from) * t))
+    fadeTimer = requestAnimationFrame(step)
   }
+  fadeEnd = finish
   fadeTimer = requestAnimationFrame(step)
 }
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) fadeEnd?.()
+})
 
 const level = () => {
   const s = usePlayer.getState()

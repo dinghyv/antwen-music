@@ -195,7 +195,7 @@ export function TrackList({
         return (
           <div
             key={`${t.id}-${i}`}
-            className={`track ${here ? 'current' : ''} ${t.unavailable ? 'unavailable' : ''} ${menu?.i === i ? 'menu' : ''}`}
+            className={`track ${here ? 'current' : ''} ${t.unavailable ? 'unavailable' : ''} ${menu?.i === i ? 'menu-open' : ''}`}
             onClick={() => (here ? usePlayer.getState().toggle() : usePlayer.getState().playQueue(tracks, i))}
             onContextMenu={(e) => {
               e.preventDefault()

@@ -240,7 +240,7 @@ select.field { padding: 0 8px; }
   height: 54px; padding: 0 12px; gap: 14px; border-radius: 10px; display: flex; align-items: center;
   transition: background 0.12s; position: relative;
 }
-.track:hover, .track.menu { background: var(--hover); }
+.track:hover, .track.menu-open { background: var(--hover); }
 .track.unavailable { opacity: 0.45; }
 .track .num { width: 26px; display: grid; place-items: center; font-size: calc(13px * var(--fs)); color: var(--faint); flex-shrink: 0; }
 .track .num .play { display: none; color: var(--text); }
@@ -255,9 +255,9 @@ select.field { padding: 0 8px; }
 .track .album { flex: 2 1 0; min-width: 0; font-size: calc(12.5px * var(--fs)); color: var(--muted); }
 .track .heart { width: 32px; height: 32px; display: grid; place-items: center; flex-shrink: 0; }
 .track .heart button { opacity: 0; }
-.track:hover .heart button, .track .heart button.on { opacity: 1; }
+.track:hover .heart button, .track.menu-open .heart button, .track .heart button.on { opacity: 1; }
 .track .more { opacity: 0; }
-.track:hover .more { opacity: 1; }
+.track:hover .more, .track.menu-open .more { opacity: 1; }
 .track .dur { width: 44px; text-align: right; font-size: calc(12.5px * var(--fs)); color: var(--faint); flex-shrink: 0; }
 .track .when { font-size: calc(12px * var(--fs)); color: var(--faint); }
 .bars { display: inline-flex; gap: 2px; align-items: flex-end; height: 14px; width: 16px; }
