@@ -7,6 +7,33 @@ import { useApp } from '../store/app.ts'
 export type Lang = 'en' | 'zh-CN'
 
 const zhWeb: Record<string, string> = {
+  // Fonts
+  Font: '字体',
+  'English Font': '英文字体',
+  'Chinese Font': '中文字体',
+  'Letters and digits use the English font; Chinese falls through to the Chinese one':
+    '字母和数字用英文字体，中文用中文字体',
+  'Custom…': '自定义…',
+  'Font name installed on this device, e.g. JetBrains Mono': '本机已安装的字体名，例如 JetBrains Mono',
+  'Font name installed on this device, e.g. LXGW WenKai': '本机已安装的字体名，例如 霞鹜文楷',
+  'Font Size': '字体大小',
+  'Letter Spacing': '字间距',
+  'Space Between Chinese and English': '中英文间距',
+  'A small gap between Chinese and Latin letters or digits': '在中文与英文、数字之间自动留出约 1/8 字宽的空隙',
+  "This browser doesn't support it yet (Chrome / Edge 140+)": '当前浏览器暂不支持（需 Chrome / Edge 140 及以上）',
+  'Reset Fonts': '恢复默认',
+  'Poppins (antwen)': 'Poppins（主站）',
+  'MiSans (antwen)': 'MiSans（主站）',
+  'System Default': '系统默认',
+  'Georgia (serif)': 'Georgia（衬线）',
+  'Times New Roman (serif)': 'Times New Roman（衬线）',
+  Monospace: '等宽',
+  PingFang: '苹方',
+  'Microsoft YaHei': '微软雅黑',
+  'Noto Sans SC': '思源黑体',
+  DengXian: '等线',
+  'Song / Noto Serif SC': '宋体 / 思源宋体',
+  Kaiti: '楷体',
   'Sign in with antwen': '使用 antwen 账号登录',
   'Sign out of antwen music': '退出 antwen music',
   'Install Plugin': '安装插件',

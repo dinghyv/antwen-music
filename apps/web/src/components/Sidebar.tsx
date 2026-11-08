@@ -362,7 +362,7 @@ function AccountButton({ source }: { source?: SourceInfo }) {
         onContextMenu={(e) => (e.preventDefault(), setEl(e.currentTarget))}
       >
         <span className="avatar">{avatar ? <img src={avatar} alt="" /> : <Icon name="user" size={14} />}</span>
-        <span className={`one ${signedIn ? '' : 'muted'}`} style={{ flex: 1, fontSize: 13 }}>
+        <span className={`one ${signedIn ? '' : 'muted'}`} style={{ flex: 1, fontSize: 'calc(13px * var(--fs))' }}>
           {signedIn ? account!.name : can(source, 'signIn') ? Tf('Sign in to %s', PT(source.locales, source.name)) : PT(source.locales, source.name)}
         </span>
         {signedIn && <Icon name="upDown" size={11} style={{ color: 'var(--faint)' }} />}

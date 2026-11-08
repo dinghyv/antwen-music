@@ -187,7 +187,7 @@ export function PlaylistPageView() {
         {tracks.length ? (
           <TrackList tracks={tracks} covers playlist={pl} onRemoved={refresh} />
         ) : (
-          <div className="muted" style={{ padding: '12px', fontSize: 13 }}>
+          <div className="muted" style={{ padding: '12px', fontSize: 'calc(13px * var(--fs))' }}>
             {T('No songs yet')}
           </div>
         )}

@@ -122,10 +122,10 @@ export function LinkCard({ source, link }: { source: string; link: Link }) {
     <button className="link-card" onClick={() => nav(`/${source}/browse/${encodeURIComponent(link.page)}`)}>
       {link.imageUrl && <div className="art">{src && <img src={src} alt="" />}</div>}
       <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 3 }}>
-        <span className="one" style={{ fontSize: 14, fontWeight: 600 }}>
+        <span className="one" style={{ fontSize: 'calc(14px * var(--fs))', fontWeight: 600 }}>
           {link.title}
         </span>
-        {link.subtitle && <span className="one muted" style={{ fontSize: 12 }}>{link.subtitle}</span>}
+        {link.subtitle && <span className="one muted" style={{ fontSize: 'calc(12px * var(--fs))' }}>{link.subtitle}</span>}
       </div>
     </button>
   )
@@ -173,7 +173,7 @@ export function BrowseSections({ source, page, pageId, feature }: { source: stri
             <SectionTitle title={sec.title} first={i === 0 && !feature && !page.title} onMore={more} />
             {sec.tracks?.length ? <TrackList tracks={sec.tracks} covers album /> : null}
             <SectionCards source={source} sec={sec} />
-            {empty && sec.empty && <div className="muted" style={{ fontSize: 13, padding: '4px 0' }}>{sec.empty}</div>}
+            {empty && sec.empty && <div className="muted" style={{ fontSize: 'calc(13px * var(--fs))', padding: '4px 0' }}>{sec.empty}</div>}
           </div>
         )
       })}

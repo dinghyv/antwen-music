@@ -146,7 +146,7 @@ export function VolumeButton({ color, size = 16 }: { color?: string; size?: numb
       {el && (
         <Popover anchor={el} place="above" onClose={() => setEl(null)} className="volume-pop">
           <VerticalSlider value={muted ? 0 : volume} onChange={(v) => usePlayer.getState().setVolume(v)} />
-          <span className="tnum muted" style={{ fontSize: 11, fontWeight: 500 }}>
+          <span className="tnum muted" style={{ fontSize: 'calc(11px * var(--fs))', fontWeight: 500 }}>
             {Math.round((muted ? 0 : volume) * 100)}%
           </span>
         </Popover>
@@ -321,7 +321,7 @@ export function PlayerBar() {
             <div className="mini">
               <Icon name="note" size={18} />
             </div>
-            <span className="muted" style={{ fontSize: 13 }}>
+            <span className="muted" style={{ fontSize: 'calc(13px * var(--fs))' }}>
               {T('Not Playing')}
             </span>
           </>

@@ -7,6 +7,7 @@ import type { AdminPlugin, PluginPreview, SourceInfo } from '@antwen-music/proto
 import { api, call, errorMessage } from '../lib/api.ts'
 import { PT, T, Tf, type Lang } from '../lib/i18n.ts'
 import { Icon, type IconName } from '../lib/icons.tsx'
+import { CJK_FONTS, FONT_DEFAULTS, LATIN_FONTS, cjkSpacingSupported, type FontChoice } from '../lib/fonts.ts'
 import { useApp, can } from '../store/app.ts'
 import { Confirm, Dialog, Segmented, Spinner, Switch } from './ui.tsx'
 
@@ -42,7 +43,7 @@ export function Settings() {
         ))}
         <div style={{ flex: 1 }} />
         {me && (
-          <div className="muted" style={{ fontSize: 11.5, padding: '0 10px', lineHeight: 1.5 }}>
+          <div className="muted" style={{ fontSize: 'calc(11.5px * var(--fs))', padding: '0 10px', lineHeight: 1.5 }}>
             antwen music · {me.authMode === 'oidc' ? Tf('Signed in to antwen as %s', me.name) : 'local'}
           </div>
         )}
@@ -94,6 +95,7 @@ function General() {
           />
         </Row>
       </div>
+      <FontSettings />
       {me?.authMode === 'oidc' && (
         <div className="group">
           <Row title={T('Account')} sub={Tf('Signed in to antwen as %s', me.name)}>
@@ -109,6 +111,141 @@ function General() {
           </Row>
         </div>
       )}
+    </>
+  )
+}
+
+/** A font picker: the list, and a name to type when "Custom…" is chosen. */
+function FontPick({
+  table,
+  value,
+  custom,
+  placeholder,
+  onChange,
+}: {
+  table: Record<string, FontChoice>
+  value: string
+  custom: string
+  placeholder: string
+  onChange: (key: string, custom?: string) => void
+}) {
+  const [text, setText] = useState(custom)
+  useEffect(() => setText(custom), [custom])
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end' }}>
+      <select className="field" style={{ width: 200 }} value={value} onChange={(e) => onChange(e.target.value)}>
+        {Object.entries(table).map(([k, f]) => (
+          <option key={k} value={k} style={{ fontFamily: f.stack }}>
+            {T(f.label)}
+          </option>
+        ))}
+        <option value="custom">{T('Custom…')}</option>
+      </select>
+      {value === 'custom' && (
+        <input
+          className="field"
+          style={{ width: 200 }}
+          value={text}
+          placeholder={placeholder}
+          onChange={(e) => setText(e.target.value)}
+          onBlur={() => onChange('custom', text.trim())}
+          onKeyDown={(e) => e.key === 'Enter' && onChange('custom', text.trim())}
+        />
+      )}
+    </div>
+  )
+}
+
+function Slider({ value, min, max, step, format, onChange }: { value: number; min: number; max: number; step: number; format: (v: number) => string; onChange: (v: number) => void }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        style={{ width: 150, accentColor: 'var(--accent)' }}
+        onChange={(e) => onChange(Number(e.target.value))}
+      />
+      <span className="tnum muted" style={{ width: 52, textAlign: 'right', fontSize: 'calc(12.5px * var(--fs))' }}>
+        {format(value)}
+      </span>
+    </div>
+  )
+}
+
+function FontSettings() {
+  const { prefs, setPrefs } = useApp()
+  const latin = prefs.fontLatin ?? FONT_DEFAULTS.fontLatin
+  const cjk = prefs.fontCjk ?? FONT_DEFAULTS.fontCjk
+  const scale = prefs.fontScale ?? FONT_DEFAULTS.fontScale
+  const spacing = prefs.letterSpacing ?? FONT_DEFAULTS.letterSpacing
+  const isDefault =
+    latin === FONT_DEFAULTS.fontLatin && cjk === FONT_DEFAULTS.fontCjk && scale === 1 && spacing === 0 && !prefs.cjkSpacing
+  return (
+    <>
+      <h2 style={{ marginTop: 10 }}>
+        <span>{T('Font')}</span>
+        {!isDefault && (
+          <button
+            className="btn"
+            onClick={() =>
+              setPrefs({ fontLatin: FONT_DEFAULTS.fontLatin, fontCjk: FONT_DEFAULTS.fontCjk, fontScale: 1, letterSpacing: 0, cjkSpacing: false })
+            }
+          >
+            {T('Reset Fonts')}
+          </button>
+        )}
+      </h2>
+      <div className="group">
+        <div className="row col" style={{ gap: 4 }}>
+          <div style={{ fontSize: 'calc(20px * var(--fs))', fontWeight: 600, lineHeight: 1.35 }}>MyGo Music 网页版 0123456789</div>
+          <div className="muted">The quick brown fox 跳过了懒狗。Taylor Swift 的 reputation 发行于 2017 年。</div>
+        </div>
+        <Row title={T('English Font')} sub={T('Letters and digits use the English font; Chinese falls through to the Chinese one')}>
+          <FontPick
+            table={LATIN_FONTS}
+            value={latin}
+            custom={prefs.fontLatinCustom ?? ''}
+            placeholder={T('Font name installed on this device, e.g. JetBrains Mono')}
+            onChange={(k, c) => setPrefs(c === undefined ? { fontLatin: k } : { fontLatin: k, fontLatinCustom: c })}
+          />
+        </Row>
+        <Row title={T('Chinese Font')}>
+          <FontPick
+            table={CJK_FONTS}
+            value={cjk}
+            custom={prefs.fontCjkCustom ?? ''}
+            placeholder={T('Font name installed on this device, e.g. LXGW WenKai')}
+            onChange={(k, c) => setPrefs(c === undefined ? { fontCjk: k } : { fontCjk: k, fontCjkCustom: c })}
+          />
+        </Row>
+        <Row title={T('Font Size')}>
+          <Slider value={scale} min={0.85} max={1.3} step={0.05} format={(v) => `${Math.round(v * 100)}%`} onChange={(v) => setPrefs({ fontScale: v })} />
+        </Row>
+        <Row title={T('Letter Spacing')}>
+          <Slider
+            value={spacing}
+            min={-0.05}
+            max={0.2}
+            step={0.01}
+            format={(v) => (Math.abs(v) < 0.001 ? '0' : `${v > 0 ? '+' : ''}${v.toFixed(2)}em`)}
+            onChange={(v) => setPrefs({ letterSpacing: Math.round(v * 100) / 100 })}
+          />
+        </Row>
+        <Row
+          title={T('Space Between Chinese and English')}
+          sub={cjkSpacingSupported ? T('A small gap between Chinese and Latin letters or digits') : T("This browser doesn't support it yet (Chrome / Edge 140+)")}
+        >
+          <Switch
+            on={!!prefs.cjkSpacing}
+            disabled={!cjkSpacingSupported}
+            onChange={(v) => setPrefs({ cjkSpacing: v })}
+            label={T('Space Between Chinese and English')}
+          />
+        </Row>
+      </div>
     </>
   )
 }
@@ -165,7 +302,7 @@ function Plugins() {
           </button>
         )}
       </h2>
-      {ids.length === 0 && <div className="muted" style={{ fontSize: 13 }}>{T('No plugins yet')}</div>}
+      {ids.length === 0 && <div className="muted" style={{ fontSize: 'calc(13px * var(--fs))' }}>{T('No plugins yet')}</div>}
       {ids.map((id) => (
         <PluginBlock
           key={id}
@@ -259,14 +396,14 @@ function PluginBlock({
         ))}
       {admin && (
         <div className="row col" style={{ gap: 10 }}>
-          <label className="muted" style={{ fontSize: 12, fontWeight: 600 }}>
+          <label className="muted" style={{ fontSize: 'calc(12px * var(--fs))', fontWeight: 600 }}>
             {T('Admin')}
           </label>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 13 }}>{T('Network Route')}</span>
+            <span style={{ fontSize: 'calc(13px * var(--fs))' }}>{T('Network Route')}</span>
             <select
               className="field"
-              style={{ width: 160, height: 28, fontSize: 13 }}
+              style={{ width: 160, height: 28, fontSize: 'calc(13px * var(--fs))' }}
               value={admin.route}
               disabled={busy}
               onChange={(e) => act(() => api(`/api/admin/plugins/${admin.id}`, { method: 'PUT', body: { route: e.target.value } }))}
@@ -286,10 +423,10 @@ function PluginBlock({
               {T('Test the Network')}
             </button>
             {!proxyConfigured && !globalProxyConfigured && (
-              <span className="muted" style={{ fontSize: 12 }}>{T('No proxy is set (optional): CN_PROXY_URL or GLOBAL_PROXY_URL in .env')}</span>
+              <span className="muted" style={{ fontSize: 'calc(12px * var(--fs))' }}>{T('No proxy is set (optional): CN_PROXY_URL or GLOBAL_PROXY_URL in .env')}</span>
             )}
           </div>
-          <div className="muted" style={{ fontSize: 12 }}>
+          <div className="muted" style={{ fontSize: 'calc(12px * var(--fs))' }}>
             {T('It can reach')}: {admin.network.join(', ') || '—'}
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -314,7 +451,7 @@ function PluginBlock({
             <button className="btn" disabled={busy} onClick={() => act(() => api(`/api/admin/plugins/${admin.id}/reload`, { body: {} }))}>
               {T('Reload')}
             </button>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'calc(13px * var(--fs))' }}>
               <Switch
                 on={!admin.enabled}
                 label={T('Off for everyone')}

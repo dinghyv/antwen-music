@@ -165,7 +165,7 @@ export function BrowsePage() {
               {b.subtitle && <div className="kind">{b.subtitle}</div>}
               <h1>{b.title}</h1>
               {lines.map((l, i) => (
-                <div key={i} className="desc two" style={{ fontSize: 13 }}>
+                <div key={i} className="desc two" style={{ fontSize: 'calc(13px * var(--fs))' }}>
                   {l}
                 </div>
               ))}
@@ -176,7 +176,7 @@ export function BrowsePage() {
             <>
               <Heading title={b.title ?? ''} sub={b.subtitle} />
               {lines.map((l, i) => (
-                <div key={i} className="muted two" style={{ fontSize: 13, lineHeight: 1.45, marginTop: -10, marginBottom: 18 }}>
+                <div key={i} className="muted two" style={{ fontSize: 'calc(13px * var(--fs))', lineHeight: 1.45, marginTop: -10, marginBottom: 18 }}>
                   {l}
                 </div>
               ))}
@@ -214,7 +214,7 @@ export function SectionPage() {
         <div className="hero">
           <DayArt source={src} url={tracks[0]?.album?.imageUrl} />
           <div className="info">
-            <div className="muted" style={{ fontSize: 12, fontWeight: 600, letterSpacing: 0.3 }}>
+            <div className="muted" style={{ fontSize: 'calc(12px * var(--fs))', fontWeight: 600, letterSpacing: 'calc(0.3px + var(--ls))' }}>
               {today()}
             </div>
             <h1>{title}</h1>

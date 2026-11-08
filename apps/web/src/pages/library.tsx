@@ -146,12 +146,12 @@ function StationHero({ source, station }: { source: string; station: Station }) 
       {img && <div style={{ position: 'absolute', inset: -40, backgroundImage: `url("${img}")`, backgroundSize: 'cover', filter: 'blur(30px) saturate(1.3)', opacity: 0.55 }} />}
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(0deg, rgba(0,0,0,.45), transparent 70%)' }} />
       <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 520 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 0.4, opacity: 0.7, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ fontSize: 'calc(12px * var(--fs))', fontWeight: 700, letterSpacing: 'calc(0.4px + var(--ls))', opacity: 0.7, display: 'flex', alignItems: 'center', gap: 6 }}>
           <Icon name="radio" size={14} />
           {T('Radio')}
         </div>
-        <div style={{ fontSize: 32, fontWeight: 800, letterSpacing: -0.8 }}>{station.name}</div>
-        {station.description && <div style={{ fontSize: 13.5, opacity: 0.8, lineHeight: 1.45 }}>{station.description}</div>}
+        <div style={{ fontSize: 'calc(32px * var(--fs))', fontWeight: 800, letterSpacing: 'calc(-0.8px + var(--ls))' }}>{station.name}</div>
+        {station.description && <div style={{ fontSize: 'calc(13.5px * var(--fs))', opacity: 0.8, lineHeight: 1.45 }}>{station.description}</div>}
         <div style={{ marginTop: 10 }}>
           <button
             className="daily-btn white"

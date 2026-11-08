@@ -170,10 +170,10 @@ function NowSide({ track }: { track: Track }) {
               <Icon name="x" size={11} />
             </button>
           )}
-          <div className="one" style={{ fontSize: 22, fontWeight: 700, letterSpacing: -0.3 }}>
+          <div className="one" style={{ fontSize: 'calc(22px * var(--fs))', fontWeight: 700, letterSpacing: 'calc(-0.3px + var(--ls))' }}>
             {track.name}
           </div>
-          <div className="one" style={{ fontSize: 15, color: 'rgba(255,255,255,.6)' }}>
+          <div className="one" style={{ fontSize: 'calc(15px * var(--fs))', color: 'rgba(255,255,255,.6)' }}>
             <ArtistLinks artists={track.artists} source={track.source} />
             {track.album?.name ? ` — ${track.album.name}` : ''}
           </div>
@@ -183,7 +183,7 @@ function NowSide({ track }: { track: Track }) {
         <IconButton icon="more" size={20} label={T('More')} style={{ color: 'rgba(255,255,255,.8)' }} onClick={(e) => setMenu(e.currentTarget as HTMLElement)} />
       </div>
       <Scrubber />
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, color: 'rgba(255,255,255,.5)', marginTop: 2 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 'calc(11px * var(--fs))', color: 'rgba(255,255,255,.5)', marginTop: 2 }}>
         <span className="tnum">{clock(t)}</span>
         {lossless && <span className="np-lossless">{T('Lossless')}</span>}
         <span className="tnum">-{clock(Math.max(0, duration - t))}</span>
@@ -382,7 +382,7 @@ function StageBar({ track, shown }: { track: Track; shown: boolean }) {
             <Img source={track.source} url={track.album?.imageUrl} px={44} iconSize={16} eager />
           </div>
           <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <span className="one" style={{ fontSize: 14, fontWeight: 700 }}>
+            <span className="one" style={{ fontSize: 'calc(14px * var(--fs))', fontWeight: 700 }}>
               {track.name}
             </span>
             <ArtistLinks artists={track.artists} source={track.source} className="np-dim" />
@@ -390,7 +390,7 @@ function StageBar({ track, shown }: { track: Track; shown: boolean }) {
           <HeartButton track={track} size={16} dark />
         </div>
         <Transport size={16} dark />
-        <div style={{ flex: '1 1 0', display: 'flex', justifyContent: 'flex-end', fontSize: 11.5, color: 'rgba(255,255,255,.5)' }} className="tnum np-time">
+        <div style={{ flex: '1 1 0', display: 'flex', justifyContent: 'flex-end', fontSize: 'calc(11.5px * var(--fs))', color: 'rgba(255,255,255,.5)' }} className="tnum np-time">
           {clock(t)} / {clock(duration)}
         </div>
       </div>
@@ -414,10 +414,10 @@ function Wall({ track }: { track: Track }) {
           <Img source={track.source} url={track.album?.imageUrl} px={360} iconSize={60} eager />
         </div>
         <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div className="two" style={{ fontSize: 28, fontWeight: 800, letterSpacing: -0.5 }}>
+          <div className="two" style={{ fontSize: 'calc(28px * var(--fs))', fontWeight: 800, letterSpacing: 'calc(-0.5px + var(--ls))' }}>
             {track.name}
           </div>
-          <div className="one" style={{ fontSize: 15, color: 'rgba(255,255,255,.6)' }}>
+          <div className="one" style={{ fontSize: 'calc(15px * var(--fs))', color: 'rgba(255,255,255,.6)' }}>
             <ArtistLinks artists={track.artists} source={track.source} />
           </div>
         </div>
@@ -454,7 +454,7 @@ function QueuePane() {
           </button>
         )}
       </div>
-      {upNext.length === 0 && <div style={{ color: 'rgba(255,255,255,.45)', fontSize: 13, padding: '8px 12px' }}>{T('Nothing up next')}</div>}
+      {upNext.length === 0 && <div style={{ color: 'rgba(255,255,255,.45)', fontSize: 'calc(13px * var(--fs))', padding: '8px 12px' }}>{T('Nothing up next')}</div>}
       {upNext.map((t, k) => {
         const i = index + 1 + k
         return (
@@ -484,12 +484,12 @@ function QueueRow({ t, i, current }: { t: Track; i: number; current?: boolean })
         <Img source={t.source} url={t.album?.imageUrl} px={40} iconSize={14} eager />
       </div>
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <span className="one" style={{ fontSize: 14, fontWeight: 600 }}>
+        <span className="one" style={{ fontSize: 'calc(14px * var(--fs))', fontWeight: 600 }}>
           {t.name}
         </span>
         <ArtistLinks artists={t.artists} source={t.source} className="np-dim" />
       </div>
-      <span className="tnum" style={{ fontSize: 12, color: 'rgba(255,255,255,.45)' }}>
+      <span className="tnum" style={{ fontSize: 'calc(12px * var(--fs))', color: 'rgba(255,255,255,.45)' }}>
         {t.duration ? clock(t.duration) : ''}
       </span>
       {!current && (

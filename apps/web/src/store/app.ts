@@ -2,8 +2,9 @@ import { create } from 'zustand'
 import type { Account, HostEvent, Me, SignInPrompt, SourceInfo } from '@antwen-music/protocol'
 import { api, call, errorMessage } from '../lib/api.ts'
 import { setLanguage, type Lang } from '../lib/i18n.ts'
+import { applyFonts, type FontPrefs } from '../lib/fonts.ts'
 
-export interface Prefs {
+export interface Prefs extends FontPrefs {
   language: Lang
   appearance: 'system' | 'light' | 'dark'
   quality: 'standard' | 'high' | 'lossless'
@@ -76,6 +77,7 @@ export const useApp = create<AppState>((set, get) => ({
     const p = { ...defaults, ...prefs }
     setLanguage(p.language)
     applyAppearance(p.appearance)
+    applyFonts(p)
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => applyAppearance(get().prefs.appearance))
     set({ me, prefs: p })
     await get().refreshSources()
@@ -87,6 +89,7 @@ export const useApp = create<AppState>((set, get) => ({
     const prefs = { ...get().prefs, ...patch }
     if (patch.language) setLanguage(patch.language)
     if (patch.appearance) applyAppearance(patch.appearance)
+    applyFonts(prefs)
     set({ prefs })
     clearTimeout(saveTimer)
     saveTimer = setTimeout(() => void api('/api/prefs', { method: 'PUT', body: get().prefs }), 400)
