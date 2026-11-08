@@ -1,0 +1,6 @@
+* text=auto
+# Shell scripts run on the Linux server: keep LF whatever the checkout.
+*.sh text eol=lf
+# Batch files run on Windows: keep CRLF.
+*.cmd text eol=crlf
+*.png binary

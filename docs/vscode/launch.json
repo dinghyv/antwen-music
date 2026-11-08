@@ -1,0 +1,45 @@
+{
+  // 复制到 .vscode/launch.json。F5 选「全部调试」：服务端（插件宿主和插件 worker 里都能打断点）+ Vite + Edge
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "服务端",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/server",
+      "runtimeArgs": ["--import", "tsx"],
+      "program": "${workspaceFolder}/apps/server/src/index.ts",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "前端 Vite",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/web",
+      "program": "${workspaceFolder}/apps/web/node_modules/vite/bin/vite.js",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "浏览器 Edge",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/apps/web"
+    },
+    {
+      "name": "浏览器 Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/apps/web"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "全部调试",
+      "configurations": ["服务端", "前端 Vite", "浏览器 Edge"],
+      "stopAll": true
+    }
+  ]
+}

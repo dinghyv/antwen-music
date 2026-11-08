@@ -1,0 +1,18 @@
+{
+  "name": "antwen-music",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MyGo Music for the web: the player and its plugins, in the browser.",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "packageManager": "pnpm@10.18.0",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @antwen-music/server --filter @antwen-music/web dev",
+    "build": "pnpm --filter @antwen-music/web build && pnpm --filter @antwen-music/server build",
+    "start": "node apps/server/dist/index.js",
+    "typecheck": "pnpm -r typecheck"
+  }
+}
