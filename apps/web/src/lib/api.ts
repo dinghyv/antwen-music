@@ -15,8 +15,9 @@ export async function api<T>(path: string, init: { method?: string; body?: unkno
     credentials: 'same-origin',
   })
   if (res.status === 401 && !path.startsWith('/api/auth/')) {
-    location.href = `/api/auth/login?return=${encodeURIComponent(location.pathname + location.search)}`
-    throw new ApiError(401, undefined, 'Sign in first')
+    // No redirect: the app shows its sign-in page, and the user chooses to go.
+    window.dispatchEvent(new Event('antwen:signed-out'))
+    throw new ApiError(401, 'auth', 'Sign in first')
   }
   const text = await res.text()
   const data = text ? JSON.parse(text) : undefined

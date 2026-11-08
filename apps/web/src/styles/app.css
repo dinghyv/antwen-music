@@ -563,3 +563,18 @@ select.field { padding: 0 8px; }
   .row { flex-wrap: wrap; }
   .row .what { min-width: 60%; }
 }
+
+/* Sign-in page (components/Login.tsx) */
+.login { height: 100vh; height: 100dvh; display: grid; place-items: center; padding: 24px; background: var(--bg); color: var(--text); }
+.login-box { display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; }
+.login-logo { width: 84px; height: 84px; border-radius: 20px; box-shadow: 0 14px 34px -12px var(--card-shade); }
+.login h1 { margin: 0 0 14px; font-size: calc(34px * var(--fs)); font-weight: 700; letter-spacing: calc(1px + var(--ls)); }
+.login-btn {
+  display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 22px; border-radius: 999px;
+  background: var(--accent); color: var(--on-accent); font-size: calc(14.5px * var(--fs)); font-weight: 600;
+  box-shadow: 0 8px 22px -10px var(--accent); transition: background 0.15s, transform 0.15s;
+}
+.login-btn:hover { background: var(--accent-hover); }
+.login-btn:active { transform: scale(0.98); }
+.login-btn img { width: 20px; height: 20px; border-radius: 5px; background: #fff; padding: 1px; flex-shrink: 0; }
+@media (max-width: 760px) { .login-btn { height: 48px; padding: 0 18px; font-size: calc(14px * var(--fs)); } }

@@ -103,7 +103,7 @@ function General() {
               className="btn"
               onClick={async () => {
                 await api('/api/auth/logout', { body: {} })
-                location.href = '/api/auth/login'
+                location.href = '/'
               }}
             >
               {T('Sign out of antwen music')}
